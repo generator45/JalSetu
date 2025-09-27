@@ -1,3 +1,5 @@
+import { MapPin, Home, Square, Hammer, Users } from 'lucide-react';
+
 export default function Hero() {
   return (
     <div className="relative min-h-[90vh]">
@@ -41,8 +43,9 @@ export default function Hero() {
                 <div>
                   <label
                     htmlFor="location"
-                    className="block text-white font-medium mb-2"
+                    className="text-white font-medium mb-2 flex items-center gap-2"
                   >
+                    <MapPin size={16} />
                     Location
                   </label>
                   <input
@@ -56,8 +59,9 @@ export default function Hero() {
                 <div>
                   <label
                     htmlFor="roofArea"
-                    className="block text-white font-medium mb-2"
+                    className="text-white font-medium mb-2 flex items-center gap-2"
                   >
+                    <Home size={16} />
                     Roof Area (sq ft)
                   </label>
                   <input
@@ -69,13 +73,14 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Second Row - Open Area and Number of Dwellers */}
+              {/* Second Row - Open Area and Roof Type */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label
                     htmlFor="openArea"
-                    className="block text-white font-medium mb-2"
+                    className="text-white font-medium mb-2 flex items-center gap-2"
                   >
+                    <Square size={16} />
                     Open Area (sq ft)
                   </label>
                   <input
@@ -88,9 +93,34 @@ export default function Hero() {
 
                 <div>
                   <label
-                    htmlFor="dwellers"
-                    className="block text-white font-medium mb-2"
+                    htmlFor="roofType"
+                    className="text-white font-medium mb-2 flex items-center gap-2"
                   >
+                    <Hammer size={16} />
+                    Roof Type
+                  </label>
+                  <select
+                    id="roofType"
+                    className="w-full px-4 py-3 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-300"
+                  >
+                    <option value="" className="bg-gray-800 text-white">Select roof type</option>
+                    <option value="Concrete" className="bg-gray-800 text-white">Concrete</option>
+                    <option value="PVC" className="bg-gray-800 text-white">PVC</option>
+                    <option value="Asbestos" className="bg-gray-800 text-white">Asbestos</option>
+                    <option value="Concrete Road" className="bg-gray-800 text-white">Concrete Road</option>
+                    <option value="Bitumen Road" className="bg-gray-800 text-white">Bitumen Road</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Third Row - Number of Dwellers */}
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label
+                    htmlFor="dwellers"
+                    className="text-white font-medium mb-2 flex items-center gap-2"
+                  >
+                    <Users size={16} />
                     Number of Dwellers
                   </label>
                   <input
