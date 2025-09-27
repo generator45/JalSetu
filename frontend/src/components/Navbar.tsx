@@ -14,7 +14,7 @@ const Navbar = () => {
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
 
   return (
-    <nav className="bg-white/10 border-b border-gray-200 sticky top-0 z-50 shadow-2xl">
+    <nav className="bg-blue-50 border-b border-gray-200 sticky top-0 z-50 shadow-lg">
       <div className="max-w-[90rem] mx-auto">
         <div className="flex justify-between items-center py-2">
           {/* Logo */}
