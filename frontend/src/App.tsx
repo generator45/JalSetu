@@ -1,13 +1,11 @@
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 
-function App() {
+export default function App() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#F5F5DC" }}>
+    <div className="bg-amber-50 min-h-screen">
       <Navbar />
       <Hero />
     </div>
   );
 }
-
-export default App;
