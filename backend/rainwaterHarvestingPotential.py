@@ -2,7 +2,7 @@ import imdlib as imd
 
 def calculate_rainwater_harvesting(latitude, longitude, roof_area_m2, roof_type, 
                                   household_size, per_capita_demand_lpd=135, 
-                                  water_cost_rs_per_m3=20, start_year=2020, end_year=2020):
+                                  water_cost_rs_per_m3=500, start_year=2020, end_year=2020):
     """
     Calculate rainwater harvesting potential and feasibility for a given location.
     
@@ -70,7 +70,18 @@ def calculate_rainwater_harvesting(latitude, longitude, roof_area_m2, roof_type,
     annual_savings_rs = harvested_volume_m3 * water_cost_rs_per_m3
     
     # Determine feasibility
-    feasibility = "Sufficient" if harvested_volume_m3 >= annual_demand_m3 else "Insufficient"
+    if annual_demand_m3 > 0:  # avoid division by zero
+        ratio = harvested_volume_m3 / annual_demand_m3
+    else:
+        ratio = 0
+
+    # Classify feasibility
+    if ratio < 0.3:
+        feasibility = "Low"
+    elif 0.3 <= ratio < 0.7:
+        feasibility = "Medium"
+    else:
+        feasibility = "High"
 
     # Return all results as a dictionary
     return {

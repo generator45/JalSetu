@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Globe } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
@@ -7,8 +8,6 @@ const Navbar = () => {
   const languages = [
     { code: "en", name: "English", flag: "🇺🇸" },
     { code: "hi", name: "हिंदी", flag: "🇮🇳" },
-    { code: "bn", name: "বাংলা", flag: "🇧🇩" },
-    { code: "te", name: "తెలుగు", flag: "🇮🇳" },
   ];
 
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
@@ -19,20 +18,21 @@ const Navbar = () => {
         <div className="flex justify-between items-center py-2">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <div className="text-2xl font-bold text-emerald-700 hover:text-emerald-800 transition-colors cursor-pointer">
+            <Link
+              to={"/"}
+              className="text-2xl font-bold text-emerald-700 hover:text-emerald-800 transition-colors cursor-pointer"
+            >
               JalSetu
-            </div>
+            </Link>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="flex items-center space-x-8">
-            <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 hover:cursor-pointer">
+            <Link
+              to={"/report"}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 hover:cursor-pointer"
+            >
               Check Potential
-            </button>
-
-            <button className="text-gray-700 hover:text-emerald-600 hover:bg-emerald-50 px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:cursor-pointer">
-              Learn More
-            </button>
+            </Link>
 
             {/* Language Selector */}
             <div className="relative">

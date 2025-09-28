@@ -1,6 +1,6 @@
 export default function Awareness() {
   return (
-    <div className=" py-32">
+    <div className=" py-32" id="awareness">
       <div className="max-w-[90rem] mx-auto flex flex-col gap-4">
         <h3 className="text-4xl font-bold text-center mb-10 text-gray-800">
           What is Rainwater Harvesting?
