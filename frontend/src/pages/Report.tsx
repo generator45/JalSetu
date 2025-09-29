@@ -1,5 +1,5 @@
 import { MapPin, Home, Hammer, Users } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 
 interface FormData {
@@ -53,6 +53,88 @@ function Report() {
   const [result, setResult] = useState<ReportResult | null>(null);
   const [showResult, setShowResult] = useState(false);
 
+  const generateQuery = useCallback((data: FormData) => {
+    // Create query parameters for your backend API
+    const queryParams = new URLSearchParams({
+      location: data.location,
+      roof_area: data.roofArea.toString(),
+      roof_type: data.roofType,
+      household_size: data.dwellers.toString(),
+      // You can add more parameters as needed
+      per_capita_demand: "135", // Default BIS standard
+      water_cost: "500", // Default cost per cubic meter
+    });
+
+    return queryParams.toString();
+  }, []);
+
+  const generateReport = useCallback(
+    async (data: FormData) => {
+      setIsLoading(true);
+      setError(null);
+      setShowResult(false);
+
+      try {
+        // Validate form data
+        if (
+          !data.location ||
+          !data.roofType ||
+          data.roofArea <= 0 ||
+          data.dwellers <= 0
+        ) {
+          throw new Error(
+            "Please fill in all required fields with valid values"
+          );
+        }
+
+        // Generate query string for backend API
+        const queryString = generateQuery(data);
+
+        // Your backend URL
+        const backendUrl = `${
+          import.meta.env.VITE_API_URL || "http://localhost:8000"
+        }/api/calculate-rainwater-harvesting?${queryString}`;
+
+        console.log("Making API call to:", backendUrl);
+
+        // Make the actual API call
+        const response = await fetch(backendUrl, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || "Failed to generate report");
+        }
+
+        const apiResult = await response.json();
+        console.log("Backend Response:", apiResult);
+
+        // Set the result and show it
+        setResult(apiResult);
+        setShowResult(true);
+      } catch (err) {
+        console.error("API Error:", err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : "An error occurred while generating the report"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [generateQuery]
+  );
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    generateReport(formData);
+  };
+
   // Populate form from query parameters on component mount
   useEffect(() => {
     const location = searchParams.get("location");
@@ -77,7 +159,7 @@ function Report() {
         dwellers: parseFloat(dwellers),
       });
     }
-  }, [searchParams]);
+  }, [searchParams, generateReport]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -92,82 +174,6 @@ function Report() {
     }));
   };
 
-  const generateQuery = (data: FormData) => {
-    // Create query parameters for your backend API
-    const queryParams = new URLSearchParams({
-      location: data.location,
-      roof_area: data.roofArea.toString(),
-      roof_type: data.roofType,
-      household_size: data.dwellers.toString(),
-      // You can add more parameters as needed
-      per_capita_demand: "135", // Default BIS standard
-      water_cost: "500", // Default cost per cubic meter
-    });
-
-    return queryParams.toString();
-  };
-
-  async function generateReport(data: FormData) {
-    setIsLoading(true);
-    setError(null);
-    setShowResult(false);
-
-    try {
-      // Validate form data
-      if (
-        !data.location ||
-        !data.roofType ||
-        data.roofArea <= 0 ||
-        data.dwellers <= 0
-      ) {
-        throw new Error("Please fill in all required fields with valid values");
-      }
-
-      // Generate query string for backend API
-      const queryString = generateQuery(data);
-
-      // Your backend URL
-      const backendUrl = `${
-        import.meta.env.VITE_API_URL || "http://localhost:8000"
-      }/api/calculate-rainwater-harvesting?${queryString}`;
-
-      console.log("Making API call to:", backendUrl);
-
-      // Make the actual API call
-      const response = await fetch(backendUrl, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to generate report");
-      }
-
-      const apiResult = await response.json();
-      console.log("Backend Response:", apiResult);
-
-      // Set the result and show it
-      setResult(apiResult);
-      setShowResult(true);
-    } catch (err) {
-      console.error("API Error:", err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : "An error occurred while generating the report"
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  const handleSubmit = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    generateReport(formData);
-  };
   return (
     <div className="min-h-screen  py-12">
       <div className="max-w-4xl mx-auto">
