@@ -1,92 +1,141 @@
-# JalSetu Backend API
+# JalSetu Backend - Rainwater Harvesting API
 
-FastAPI backend for calculating rainwater harvesting potential.
+API for calculating rainwater harvesting potential based on location, roof parameters, and household data.
 
-## Setup and Installation
+## Project Structure
+
+```text
+backend/
+├── main.py                         # FastAPI application with endpoints
+├── rainwaterHarvestingPotential.py # Core calculation logic
+├── rwhMethod.py                    # Supporting methods
+├── requirements.txt                # Python dependencies
+├── run.sh                          # Setup and run script
+├── rain/
+│   └── 2020.grd                    # Rainfall data file
+└── tests/
+    ├── __init__.py
+    ├── conftest.py                 # Test fixtures
+    └── test_api.py                 # API tests
+```
+
+## Setup
 
 ### Prerequisites
-- Python 3.8+
-- pip
 
-### Quick Start
+- Python 3.x installed
 
-1. **Navigate to the backend directory:**
+### Installation
+
+1. **Virtual environment**:
+
    ```bash
-   cd backend
+   python3 -m venv .venv
+   source .venv/bin/activate  # On Windows use `.venv\Scripts\activate`
    ```
 
-2. **Install dependencies:**
+2. **Install dependencies**:
+
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Run the server:**
+3. **Run the server**:
+
    ```bash
-   python main.py
-   ```
-   
-   Or use the convenience script:
-   ```bash
-   ./run.sh
+   python3 main.py
    ```
 
-4. **Access the API:**
-   - API Server: http://localhost:8000
-   - Interactive Documentation: http://localhost:8000/docs
-   - Alternative Documentation: http://localhost:8000/redoc
+4. **Server details**:
+   - API runs on: `http://localhost:8000`
+   - Swagger UI docs: `http://localhost:8000/docs`
+
+---
 
 ## API Endpoints
 
-### Main Endpoint
-- **GET** `/api/calculate-rainwater-harvesting`
-  - Calculate rainwater harvesting potential for a location
-  - Parameters:
-    - `location` (required): Location name (e.g., "Delhi", "Hyderabad")
-    - `roof_area` (required): Roof area in square feet
-    - `roof_type` (required): Type of roof (Concrete, PVC, Asbestos, Concrete Road, Bitumen Road)
-    - `household_size` (required): Number of people in household
-    - `per_capita_demand` (optional): Per capita water demand in L/day (default: 135)
-    - `water_cost` (optional): Cost of water per cubic meter in Rs (default: 20)
-
-### Example Request
-```
-GET /api/calculate-rainwater-harvesting?location=Hyderabad&roof_area=1000&roof_type=Concrete&household_size=4
-```
-
 ### Health Check
-- **GET** `/api/health` - Check if the API is running
-- **GET** `/` - Root endpoint
 
-## Features
+| Endpoint      | Method | Description           |
+| ------------- | ------ | --------------------- |
+| `/api/health` | GET    | Health check endpoint |
 
-- **Location-based calculations**: Automatically converts location names to coordinates
-- **Multiple roof types**: Supports different runoff coefficients
-- **Unit conversion**: Automatically converts square feet to square meters
-- **Comprehensive results**: Returns detailed calculations including:
-  - Annual rainfall data
-  - Water harvesting potential
-  - Demand analysis
-  - Feasibility assessment
-  - Cost savings
+**Response:**
 
-## Dependencies
+```json
+{ "status": "healthy", "message": "API is working correctly" }
+```
 
-- FastAPI: Web framework
-- Uvicorn: ASGI server
-- Geocoder: Location to coordinates conversion
-- imdlib: Indian Meteorological Department rainfall data
-- xarray, numpy, pandas: Data processing
+---
 
-## CORS Configuration
+### Calculate Rainwater Harvesting
 
-The API is configured to accept requests from:
-- http://localhost:3000 (Create React App)
-- http://localhost:5173 (Vite)
+| Endpoint                              | Method | Description                              |
+| ------------------------------------- | ------ | ---------------------------------------- |
+| `/api/calculate-rainwater-harvesting` | GET    | Calculate rainwater harvesting potential |
 
-## Error Handling
+#### Required Parameters
 
-The API includes comprehensive error handling for:
-- Invalid input parameters
-- Geocoding failures
-- Data processing errors
-- Network issues
+| Parameter        | Type   | Description                                                            |
+| ---------------- | ------ | ---------------------------------------------------------------------- |
+| `location`       | string | Location name (e.g., "Delhi", "Hyderabad")                             |
+| `roof_area`      | float  | Roof area in square feet                                               |
+| `roof_type`      | string | One of: `Concrete`, `PVC`, `Asbestos`, `Concrete Road`, `Bitumen Road` |
+| `household_size` | int    | Number of people in household                                          |
+
+#### Optional Parameters
+
+| Parameter           | Type  | Default | Description                          |
+| ------------------- | ----- | ------- | ------------------------------------ |
+| `per_capita_demand` | float | 135     | Per capita water demand (liters/day) |
+| `water_cost`        | float | 20      | Cost of water (Rs/m³)                |
+| `start_year`        | int   | 2020    | Start year for rainfall data         |
+| `end_year`          | int   | 2020    | End year for rainfall data           |
+
+#### Example Request
+
+```http
+GET /api/calculate-rainwater-harvesting?location=Hyderabad&roof_area=1000&roof_type=Concrete&household_size=5
+```
+
+#### Response Fields
+
+| Field                     | Description                                 |
+| ------------------------- | ------------------------------------------- |
+| `annual_rainfall_m`       | Annual rainfall in meters                   |
+| `harvested_volume_m3`     | Harvestable water volume in cubic meters    |
+| `harvested_volume_liters` | Harvestable water volume in liters          |
+| `annual_demand_m3`        | Annual water demand in cubic meters         |
+| `annual_demand_liters`    | Annual water demand in liters               |
+| `feasibility`             | Feasibility rating (e.g., "Medium", "High") |
+| `annual_savings_rs`       | Annual cost savings in rupees               |
+| `input_parameters`        | Echo of input values                        |
+
+---
+
+## Testing
+
+### Test Framework
+
+- **pytest** with FastAPI TestClient
+
+### Run Tests with Verbose Output
+
+```bash
+python3 pytest tests/ -v
+```
+
+### Test Coverage
+
+| Test Class                                 | Description                             |
+| ------------------------------------------ | --------------------------------------- |
+| `TestHealthEndpoint`                       | Tests for `/api/health` endpoint        |
+| `TestCalculateRainwaterHarvestingEndpoint` | Tests for the main calculation endpoint |
+
+**Test categories include:**
+
+- Happy path tests (valid requests)
+- Input validation tests
+- Error handling tests
+- Default parameter verification
+- Response field validation

@@ -1,18 +1,17 @@
+## Project Description
 
+JalSetu is a web application designed to bridge the knowledge gap around household rainwater harvesting. It will provide reliable
+analyses of feasibility, cost estimates, and potential benefits based on user inputs, while incorporating local hydrogeological data and house design factors.
 
-### setup a new python virtual environment
-- cd backend
-- python3 -m venv myenv
-- source myenv/bin/activate  # On Windows use `myenv\Scripts\activate`
-- pip install -r requirements.txt
-- deactivate  # To exit the virtual environment
-### run the server
-- cd backend
-- source myenv/bin/activate  # On Windows use `myenv\Scripts\activate`
-- uvicorn main:app --reload
+## Installation
 
-### startup the frontend 
-- cd frontend
-- npm install
-- npm run dev
-- go to on `https://localhost:5173` your browser
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/generator45/JalSetu.git
+   cd JalSetu
+   ```
+
+2. Frontend and Backend Setup:
+   - Navigate to the `frontend` directory and follow the setup instructions in its README.
+   - Navigate to the `backend` directory and follow the setup instructions in its README.
