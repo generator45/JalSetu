@@ -40,13 +40,6 @@ def get_coordinates_from_location(location: str):
     except Exception as e:
         raise ValueError(f"Geocoding error: {str(e)}")
 
-@app.get("/")
-async def root():
-    """
-    Root endpoint to check if API is running
-    """
-    return {"message": "JalSetu Rainwater Harvesting API is running!"}
-
 @app.get("/api/calculate-rainwater-harvesting")
 async def calculate_rainwater_harvesting_api(
     location: str = Query(..., description="Location name (e.g., 'Delhi', 'Hyderabad')"),
@@ -61,22 +54,22 @@ async def calculate_rainwater_harvesting_api(
     """
     Calculate rainwater harvesting potential for a given location and parameters
     """
+    # Validate inputs before processing
+    if roof_area <= 0:
+        raise HTTPException(status_code=400, detail="Roof area must be greater than 0")
+    
+    if household_size <= 0:
+        raise HTTPException(status_code=400, detail="Household size must be greater than 0")
+    
+    if roof_type not in ["Concrete", "PVC", "Asbestos", "Concrete Road", "Bitumen Road"]:
+        raise HTTPException(status_code=400, detail="Invalid roof type")
+    
     try:
         # Convert location to coordinates
         latitude, longitude = get_coordinates_from_location(location)
         
         # Convert roof area from square feet to square meters
         roof_area_m2 = roof_area * 0.092903  # 1 sq ft = 0.092903 sq m
-        
-        # Validate inputs
-        if roof_area <= 0:
-            raise HTTPException(status_code=400, detail="Roof area must be greater than 0")
-        
-        if household_size <= 0:
-            raise HTTPException(status_code=400, detail="Household size must be greater than 0")
-        
-        if roof_type not in ["Concrete", "PVC", "Asbestos", "Concrete Road", "Bitumen Road"]:
-            raise HTTPException(status_code=400, detail="Invalid roof type")
         
         # Call the rainwater harvesting calculation function
         results = calculate_rainwater_harvesting(
