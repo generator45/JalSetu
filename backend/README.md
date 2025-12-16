@@ -122,7 +122,7 @@ GET /api/calculate-rainwater-harvesting?location=Hyderabad&roof_area=1000&roof_t
 ### Run Tests with Verbose Output
 
 ```bash
-python3 pytest tests/ -v
+pytest tests/ -v
 ```
 
 ### Test Coverage
