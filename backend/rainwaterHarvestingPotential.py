@@ -34,7 +34,11 @@ def calculate_rainwater_harvesting(latitude, longitude, roof_area_m2, roof_type,
     # ------------------------------
     # Step 2: Download Rainfall Data
     # ------------------------------
-    rain_data = imd.get_data('rain', start_year, end_year, fn_format='yearwise')
+    # rain_data = imd.get_data('rain', start_year, end_year, fn_format='yearwise')
+    try:
+        rain_data = imd.open_data('rain', start_year, end_year, fn_format='yearwise', file_dir='imd_data')
+    except:
+        rain_data = imd.get_data('rain', start_year, end_year, fn_format='yearwise', file_dir='imd_data')
 
     # Convert to xarray
     rain_dataset = rain_data.get_xarray()
